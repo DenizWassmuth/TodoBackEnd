@@ -21,27 +21,27 @@ public class TodoService {
     }
 
     //Get
-    List<OutTodoDto> getAllTodos() {
+    public List<OutTodoDto> getAllTodos() {
        return mapToOutTodoDtoList(todoRepo.findAll());
     }
 
     //Get
-    OutTodoDto getTodoById(String id) {
+    public OutTodoDto getTodoById(String id) {
         return null;
     }
 
     //Post
-    OutTodoDto createTodo(RegTodoDto regTodoDto) {
+    public OutTodoDto createTodo(RegTodoDto regTodoDto) {
         return null;
     }
 
     //Put
-    OutTodoDto updateTodoById(String id, UpdateTodoDto updateTodoDto) {
+    public OutTodoDto updateTodoById(String id, UpdateTodoDto updateTodoDto) {
         return null;
     }
 
     //Delete
-    boolean deleteTodoById(String id) {
+    public boolean deleteTodoById(String id) {
         return false;
     }
 }
