@@ -32,13 +32,13 @@ public class TodoController {
         return todoService.createTodo(dto);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public OutTodoDto updateTodoById(@PathVariable String id, @RequestBody UpdateTodoDto dto) {
         return todoService.updateTodoById(id, dto);
     }
 
-    @DeleteMapping
-    public boolean deleteTodoById(@RequestParam String id) {
+    @DeleteMapping("/{id}")
+    public boolean deleteTodoById(@PathVariable String id) {
         return todoService.deleteTodoById(id);
     }
 }
