@@ -91,10 +91,6 @@ class TodoControllerTest {
     @Test
     void createTodo() throws Exception {
 
-        //GIVEN
-        Instant fakeTimestamp = Instant.parse("2018-04-01T00:00:00.00Z");
-        String timeStampString = fakeTimestamp.toString();
-
         // WHEN/THEN
         mockMvc.perform(MockMvcRequestBuilders.post("/api/todo")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -113,7 +109,33 @@ class TodoControllerTest {
     }
 
     @Test
-    void updateTodoById() {
+    void updateTodoById() throws Exception {
+
+        //GIVEN
+        Instant fakeTimestamp = Instant.parse("2018-04-01T00:00:00.00Z");
+        String timeStampString = fakeTimestamp.toString();
+        TodoStatus fakeStatus = TodoStatus.DOING;
+
+        Todo newTodo = new Todo("1", "Waschen", "weiße Wäsche", fakeTimestamp, fakeStatus);
+        repo.save(newTodo);
+
+        // WHEN/THEN
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/todo/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                                """
+                                {
+                                  "title": "Putzen",
+                                  "description": "Boden wischen",
+                                  "status": "DONE"
+                                 }
+                                """))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Putzen"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("Boden wischen"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("DONE"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.timestamp").value(timeStampString));
 
     }
 
