@@ -2,23 +2,31 @@ package org.example.todobackend.helpers;
 
 
 import org.example.todobackend.dto.OutTodoDto;
-import org.example.todobackend.model.TodoRecord;
+import org.example.todobackend.dto.RegTodoDto;
+import org.example.todobackend.model.Todo;
 
 import java.util.List;
 
 public class TodoMapper {
 
-    public static OutTodoDto mapToOutTodoDto(TodoRecord todoRecord) {
-        if (todoRecord == null) {
+    public static OutTodoDto mapToOutTodoDto(Todo todo) {
+        if (todo == null) {
             return null;
         }
-        return new OutTodoDto(todoRecord.id(), todoRecord.title(), todoRecord.description(), todoRecord.timestamp());
+        return new OutTodoDto(todo.id(), todo.title(), todo.description(), todo.timestamp(), todo.status());
     }
 
-    public static List<OutTodoDto> mapToOutTodoDtoList(List<TodoRecord> todoRecords) {
-        if (todoRecords == null) {
+//    public static Todo mapToOutTodoDto(RegTodoDto todo) {
+//        if (todo == null) {
+//            return null;
+//        }
+//        return new Todo(todo.id(), todo.title(), todo.description(), todo.timestamp(), todo.status());
+//    }
+
+    public static List<OutTodoDto> mapToOutTodoDtoList(List<Todo> todos) {
+        if (todos == null) {
             return null;
         }
-        return todoRecords.stream().map(TodoMapper::mapToOutTodoDto).toList();
+        return todos.stream().map(TodoMapper::mapToOutTodoDto).toList();
     }
 }

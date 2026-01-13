@@ -1,0 +1,19 @@
+package org.example.todobackend.services;
+
+
+import org.springframework.stereotype.Service;
+
+import java.time.Instant;
+import java.util.UUID;
+
+@Service
+public class HelperService {
+
+    public String createRandomId() {
+        return UUID.randomUUID().toString();
+    }
+
+    public Instant getNow() {
+        return Instant.now();
+    }
+}
