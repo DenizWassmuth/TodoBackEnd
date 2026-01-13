@@ -10,7 +10,7 @@ import java.util.UUID;
 public class HelperService {
 
     public String createRandomId() {
-        return UUID.randomUUID().toString();
+        return UUID.randomUUID().toString().substring(0, 5);
     }
 
     public Instant getNow() {

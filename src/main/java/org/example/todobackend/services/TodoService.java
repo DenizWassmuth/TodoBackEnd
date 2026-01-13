@@ -29,14 +29,15 @@ public class TodoService {
 
     //Get
     public List<OutTodoDto> getAllTodos() {
-       return mapToOutTodoDtoList(todoRepo.findAll());
+       return todoRepo.findAll().stream().map(TodoMapper::mapToOutTodoDto).toList();
     }
 
     //Get
     public OutTodoDto getTodoById(String id) {
         if(id == null) { return null;}
         Optional<Todo> todo = todoRepo.findById(id);
-        return todo.map(TodoMapper::mapToOutTodoDto).orElse(null);
+        Todo actualTodo = todo.orElse(null);
+        return new OutTodoDto(actualTodo.id(), actualTodo.title(), actualTodo.description(), actualTodo.timestamp(), actualTodo.status());
     }
 
     //Post
@@ -51,18 +52,19 @@ public class TodoService {
 
     //Put
     public OutTodoDto updateTodoById(String id, UpdateTodoDto updateTodoDto) {
-        if(id == null) { return null; }
+        if (id == null) {
+            return null;
+        }
 
-        if(!todoRepo.existsById(id)) {
+        if (!todoRepo.existsById(id)) {
             throw new IllegalArgumentException("Todo with id " + id + " does not exist");
         }
 
-        Todo todo = todoRepo.findById(id).orElse(null);
-           Todo updatedTodo = todo.withTitle(updateTodoDto.title())
+        return mapToOutTodoDto(todoRepo.save(todoRepo.findById(id).orElse(null)
+                .withTitle(updateTodoDto.title())
                 .withDescription(updateTodoDto.description())
-                .withStatus(TodoStatus.valueOf(updateTodoDto.status()));
-
-        return mapToOutTodoDto(updatedTodo);
+                .withStatus(updateTodoDto.status()))
+        );
     }
 
     //Delete

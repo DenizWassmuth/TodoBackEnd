@@ -2,6 +2,7 @@ package org.example.todobackend.services;
 
 import org.example.todobackend.dto.OutTodoDto;
 import org.example.todobackend.dto.RegTodoDto;
+import org.example.todobackend.dto.UpdateTodoDto;
 import org.example.todobackend.enums.TodoStatus;
 import org.example.todobackend.model.Todo;
 import org.example.todobackend.repos.TodoRepo;
@@ -110,6 +111,7 @@ class TodoServiceTest {
         String fakeId = "1";
         Instant fakeTimestamp = Instant.parse("2018-04-01T00:00:00.00Z");
         TodoStatus fakeStatus = TodoStatus.DOING;
+
         Todo newTodo = new Todo(fakeId, "Putzen", "Boden feucht wischen, Silber polieren", fakeTimestamp, fakeStatus);
         OutTodoDto expectedTodo = new OutTodoDto(newTodo.id(),  newTodo.title(), newTodo.description(), fakeTimestamp, fakeStatus);
 
@@ -120,6 +122,7 @@ class TodoServiceTest {
         //WHEN
         OutTodoDto actualTodo = todoService.createTodo(new RegTodoDto(newTodo.title(), newTodo.description()));
 
+        //THEN
         Mockito.verify(todoRepo, Mockito.times(1)).save(newTodo);
         Mockito.verifyNoMoreInteractions(todoRepo);
         Mockito.verify(helperService, Mockito.times(1)).createRandomId();
@@ -135,10 +138,51 @@ class TodoServiceTest {
     }
 
     @Test
-    void updateTodoById() {
+    void updateTodoById_shouldReturnUpdatedVersionOfTodoObject() {
+        //GIVEN
+        String fakeId = "1";
+        Instant fakeTimestamp = Instant.parse("2018-04-01T00:00:00.00Z");
+        TodoStatus fakeStatus = TodoStatus.DOING;
+
+        UpdateTodoDto updateDto = new UpdateTodoDto("Putzen", "einfach alles", TodoStatus.DONE);
+        Todo updatedDto = new Todo(fakeId, updateDto.title(), updateDto.description(), fakeTimestamp, updateDto.status());
+
+        OutTodoDto expectedTodo = new OutTodoDto(updatedDto.id(), updateDto.title(), updateDto.description(), fakeTimestamp, updateDto.status());
+
+        Mockito.when(todoRepo.findById(fakeId)).thenReturn(Optional.of(updatedDto));
+        Mockito.when(todoRepo.save(updatedDto)).thenReturn(updatedDto);
+        Mockito.when(todoRepo.existsById(fakeId)).thenReturn(true);
+
+        //WHEN
+        OutTodoDto actualTodo = todoService.updateTodoById(fakeId, updateDto);
+
+        //THEN
+        Mockito.verify(todoRepo, Mockito.times(1)).existsById(fakeId);
+        Mockito.verify(todoRepo, Mockito.times(1)).findById(fakeId);
+        Mockito.verify(todoRepo, Mockito.times(1)).save(updatedDto);
+        Mockito.verifyNoMoreInteractions(todoRepo);
+
+        assertNotNull(actualTodo);
+        assertEquals(expectedTodo.id(), actualTodo.id());
+        assertEquals(expectedTodo.title(), actualTodo.title());
+        assertEquals(expectedTodo.description(), actualTodo.description());
+        assertEquals(expectedTodo.timestamp(), actualTodo.timestamp());
+        assertEquals(expectedTodo.status(), actualTodo.status());
     }
 
     @Test
     void deleteTodoById() {
+
+        //GIVEN
+        Mockito.when(todoRepo.existsById("1")).thenReturn(true).thenReturn(false);
+
+        //WHEN
+        boolean actual = todoService.deleteTodoById("1");
+
+        Mockito.verify(todoRepo, Mockito.times(2)).existsById("1");
+        Mockito.verify(todoRepo, Mockito.times(1)).deleteById("1");
+        Mockito.verifyNoMoreInteractions(todoRepo);
+
+        assertFalse(actual);
     }
 }
