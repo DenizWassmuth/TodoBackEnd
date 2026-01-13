@@ -3,6 +3,7 @@ package org.example.todobackend.controller;
 import org.example.todobackend.enums.TodoStatus;
 import org.example.todobackend.model.Todo;
 import org.example.todobackend.repos.TodoRepo;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +28,11 @@ class TodoControllerTest {
 
     @Autowired
     private TodoRepo repo;
+
+    @BeforeEach
+    void cleanDb() {
+        repo.deleteAll(); // ensures every test starts from empty DB
+    }
 
     @Test
     void getAllTodos_shouldReturnTheGivenJsonContent() throws Exception {

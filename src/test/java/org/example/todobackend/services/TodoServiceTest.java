@@ -4,6 +4,7 @@ import org.example.todobackend.dto.OutTodoDto;
 import org.example.todobackend.dto.RegTodoDto;
 import org.example.todobackend.dto.UpdateTodoDto;
 import org.example.todobackend.enums.TodoStatus;
+import org.example.todobackend.exceptions.TodoNotFoundException;
 import org.example.todobackend.model.Todo;
 import org.example.todobackend.repos.TodoRepo;
 import org.junit.jupiter.api.Test;
@@ -32,14 +33,15 @@ class TodoServiceTest {
     void getAllTodos_shouldReturnNull_whenNoTodosFound() {
 
         //GIVEN
-        Mockito.when(todoRepo.findAll()).thenReturn(null);
+        Mockito.when(todoRepo.findAll()).thenReturn(List.of());
 
         //WHEN
         List<OutTodoDto> actualList = todoService.getAllTodos();
 
         //THEN
         Mockito.verify(todoRepo, Mockito.times(1)).findAll();
-        assertNull(actualList);
+        assertNotNull(actualList);
+        assertTrue(actualList.isEmpty());
     }
 
     @Test
@@ -68,15 +70,9 @@ class TodoServiceTest {
 
     @Test
     void getTodoById_shouldReturnNull_whenNoTodoFound() {
-        //GIVEN
-        Mockito.when(todoRepo.findById("1")).thenReturn(Optional.empty());
 
-        //WHEN
-        OutTodoDto actualTodo = todoService.getTodoById("1");
-
-        //THEN
+        assertThrows(TodoNotFoundException.class, () -> todoService.getTodoById("1"));
         Mockito.verify(todoRepo, Mockito.times(1)).findById("1");
-        assertNull(actualTodo);
     }
 
     @Test
