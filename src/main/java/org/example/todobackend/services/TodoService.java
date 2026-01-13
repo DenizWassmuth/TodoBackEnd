@@ -5,9 +5,11 @@ import org.example.todobackend.dto.OutTodoDto;
 import org.example.todobackend.dto.RegTodoDto;
 import org.example.todobackend.dto.UpdateTodoDto;
 import org.example.todobackend.enums.TodoStatus;
+import org.example.todobackend.exceptions.TodoNotFoundException;
 import org.example.todobackend.helpers.TodoMapper;
 import org.example.todobackend.model.Todo;
 import org.example.todobackend.repos.TodoRepo;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -34,9 +36,13 @@ public class TodoService {
 
     //Get
     public OutTodoDto getTodoById(String id) {
-        if(id == null) { return null;}
-        Optional<Todo> todo = todoRepo.findById(id);
+
+        if(id == null) {
+            return null;}
+
+        Optional<Todo> todo = Optional.of(todoRepo.findById(id).orElseThrow(() -> new TodoNotFoundException(id)));
         Todo actualTodo = todo.orElse(null);
+
         return new OutTodoDto(actualTodo.id(), actualTodo.title(), actualTodo.description(), actualTodo.timestamp(), actualTodo.status());
     }
 
@@ -72,7 +78,7 @@ public class TodoService {
         if(id == null) { return false; }
 
         if(!todoRepo.existsById(id)) {
-            throw new IllegalArgumentException("Todo with id " + id + " does not exist");
+            throw new TodoNotFoundException(id);
         }
 
         todoRepo.deleteById(id);
