@@ -102,7 +102,8 @@ class TodoControllerTest {
                                 "status": "DOING"
                                }
                               """))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                //.andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Putzen"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("Boden wischen"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("DOING"));
@@ -152,7 +153,7 @@ class TodoControllerTest {
         //WHEN
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/todo/1"))
                 //THEN
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/todo"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
