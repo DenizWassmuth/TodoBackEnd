@@ -114,9 +114,26 @@ class TodoControllerTest {
 
     @Test
     void updateTodoById() {
+
     }
 
     @Test
-    void deleteTodoById() {
+    void deleteTodoById() throws Exception {
+
+        // GIVEN
+        Instant fakeTimestamp = Instant.parse("2018-04-01T00:00:00.00Z");
+        TodoStatus fakeStatus = TodoStatus.DOING;
+
+        Todo newTodo = new Todo("1", "Putzen", "BodenWischen", fakeTimestamp, fakeStatus);
+        repo.save(newTodo);
+
+        //WHEN
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/todo/1"))
+                //THEN
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/todo"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("[]"));
     }
 }
