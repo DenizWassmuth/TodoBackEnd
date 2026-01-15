@@ -13,7 +13,7 @@ public class HelperService {
         return UUID.randomUUID().toString().substring(0, 5);
     }
 
-    public Instant getNow() {
+    public Instant getTimestamp() {
         return Instant.now();
     }
 }

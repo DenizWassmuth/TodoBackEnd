@@ -1,8 +1,10 @@
 package org.example.todobackend.controller;
 
 import org.example.todobackend.enums.TodoStatus;
+import org.example.todobackend.exceptions.TodoNotFoundException;
 import org.example.todobackend.model.Todo;
 import org.example.todobackend.repos.TodoRepo;
+import org.example.todobackend.services.TodoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.time.Instant;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest // must-have for integration testing
 @AutoConfigureMockMvc // must-have for integration testing
@@ -58,9 +64,9 @@ class TodoControllerTest {
                                 """.formatted(timeStampString));
 
         //WHEN
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/api/todo"))
+        ResultActions resultActions = mockMvc.perform(get("/api/todo"))
                 //THEN
-                .andExpect(MockMvcResultMatchers.status().isOk()) // expecting "found" status
+                .andExpect(status().isOk()) // expecting "found" status
                 .andExpect(jsonMatch);
     }
 
@@ -88,11 +94,12 @@ class TodoControllerTest {
                                 """.formatted(timeStampString));
 
         //WHEN
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/todo/1"))
+        mockMvc.perform(get("/api/todo/1"))
                 //THEN
-                .andExpect(MockMvcResultMatchers.status().isOk()) // expecting "found" status
+                .andExpect(status().isOk()) // expecting "found" status
                 .andExpect(jsonMatch);
     }
+
 
     @Test
     void createTodo() throws Exception {
@@ -109,7 +116,7 @@ class TodoControllerTest {
                                }
                               """))
                 //.andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Putzen"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("Boden wischen"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("DOING"));
@@ -137,7 +144,7 @@ class TodoControllerTest {
                                   "status": "DONE"
                                  }
                                 """))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Putzen"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description").value("Boden wischen"))
@@ -159,10 +166,10 @@ class TodoControllerTest {
         //WHEN
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/todo/1"))
                 //THEN
-                .andExpect(MockMvcResultMatchers.status().isNoContent());
+                .andExpect(status().isNoContent());
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/todo"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+        mockMvc.perform(get("/api/todo"))
+                .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("[]"));
     }
 }

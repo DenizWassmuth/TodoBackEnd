@@ -33,8 +33,8 @@ public class TodoController {
 
         return Optional.of(todoService.getTodoById(id))
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
-                //.orElseThrow(() -> new TodoNotFoundException(id));
+                //.orElseGet(() -> ResponseEntity.notFound().build())
+                .orElseThrow(() -> new TodoNotFoundException(id));
     }
 
     @PostMapping()

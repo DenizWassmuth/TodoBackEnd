@@ -113,7 +113,7 @@ class TodoServiceTest {
 
         Mockito.when(todoRepo.save(newTodo)).thenReturn(newTodo);
         Mockito.when(helperService.createRandomId()).thenReturn(fakeId);
-        Mockito.when(helperService.getNow()).thenReturn(fakeTimestamp);
+        Mockito.when(helperService.getTimestamp()).thenReturn(fakeTimestamp);
 
         //WHEN
         OutTodoDto actualTodo = todoService.createTodo(new RegTodoDto(newTodo.title(), newTodo.description()));
@@ -122,7 +122,7 @@ class TodoServiceTest {
         Mockito.verify(todoRepo, Mockito.times(1)).save(newTodo);
         Mockito.verifyNoMoreInteractions(todoRepo);
         Mockito.verify(helperService, Mockito.times(1)).createRandomId();
-        Mockito.verify(helperService, Mockito.times(1)).getNow();
+        Mockito.verify(helperService, Mockito.times(1)).getTimestamp();
         Mockito.verifyNoMoreInteractions(helperService);
 
         assertNotNull(actualTodo);
